@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import ConnectWallet from "../components/WalletConnect";
 
 import erc20Abi from "../utils/erc20.json";
+import erc721Abi from "../utils/erc721.json";
 
 const NftBox = () => {
   const [allowanceStatus, setAllowanceStatus] = useState(false);
@@ -13,21 +14,53 @@ const NftBox = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
-      const NFTAddress = "0xE08a77e3b8812B144B47EA9f1c59b2eC29AB3312";
+      const NFTAddress = "0x6E78878Bd02AB91FE15A582C9D5d39D6DE20Bf5b";
       const erc20Address = "0xfbc577316dD351F48749Ee1EF103AC4bb82A4997";
       const contract = new ethers.Contract(erc20Address, erc20Abi, provider);
       const getAllowance = await contract.allowance(
         signer.getAddress(),
         NFTAddress
       );
-
       const allowance = BigNumber.from(getAllowance).toString();
       console.log(allowance);
-      if (getAllowance > 10 * 10 ** 18) {
+      if (getAllowance > 0) {
         setAllowanceStatus(true);
       } else {
         setAllowanceStatus(false);
       }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const approve = async () => {
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const erc20Address = "0xfbc577316dD351F48749Ee1EF103AC4bb82A4997";
+      const contract = new ethers.Contract(erc20Address, erc20Abi, signer);
+      const NFtAddress = "0x6E78878Bd02AB91FE15A582C9D5d39D6DE20Bf5b";
+      const approve = await contract.approve(
+        NFtAddress,
+        ethers.constants.MaxUint256
+      );
+      await approve.wait();
+      getAllowance();
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const MintNft = async (tokenId) => {
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const NFTAddress = "0x6E78878Bd02AB91FE15A582C9D5d39D6DE20Bf5b";
+      const contract = new ethers.Contract(NFTAddress, erc721Abi, signer);
+      const mint = await contract.safeMintWithBUSD(tokenId);
+      mint.then((res) => {
+        console.log(res);
+      });
     } catch (error) {
       console.log(error.message);
     }
@@ -45,9 +78,16 @@ const NftBox = () => {
           {!currentAccount ? (
             <button onClick={connectWallet}>connectWallet</button>
           ) : !allowanceStatus ? (
-            <button onClick={getAllowance}>Approve Busd</button>
+            <button onClick={approve}>Approve Busd</button>
           ) : (
-            <button>Mint NFT</button>
+            <button
+              onClick={() => {
+                const tokenId = Math.floor(Math.random() * 100000000000000);
+                MintNft(tokenId);
+              }}
+            >
+              Mint NFT
+            </button>
           )}
         </div>
       </div>

@@ -10,12 +10,12 @@ import "./lib/Transferhelper.sol";
 contract erc721 is ERC721("HyperNfts", "hyper"), Ownable {
     uint decimalPoint = 10**18;
 
-    uint private tokenPrice = 10 * decimalPoint;
+    uint private tokenPrice = 1 * decimalPoint;
 
-    IERC20 tokenAddress;
+    IERC20 public tokenAddress;
 
-    constructor(address tokenAddress_) {
-        tokenAddress = IERC20(tokenAddress_);
+    constructor(address add_) {
+        tokenAddress = IERC20(add_);
     }
 
     function Balance(address add_) public view returns (uint) {
@@ -30,12 +30,13 @@ contract erc721 is ERC721("HyperNfts", "hyper"), Ownable {
         tokenPrice = _price * decimalPoint;
     }
 
-    function safeMint(uint tokenId_) public {
+    function safeMintWithBUSD(uint tokenId_) public {
         require(Balance(_msgSender()) >= tokenPrice, "Insufficient balance");
         require(
-            balanceOf(msg.sender) <= 10,
+            balanceOf(msg.sender) < 10,
             "User already holds maximum number of nfts."
         );
+
         TransferHelper.safeTransferFrom(
             address(tokenAddress),
             _msgSender(),
@@ -47,26 +48,18 @@ contract erc721 is ERC721("HyperNfts", "hyper"), Ownable {
 
     function withdrawAllBusd() public onlyOwner {
         uint totalBalance = Balance(address(this));
-        TransferHelper.safeTransfer(
-            address(tokenAddress),
-            _msgSender(),
-            totalBalance
-        );
+        tokenAddress.transfer(_msgSender(), totalBalance);
     }
 
     function withdrawAllBusdToCustomAddress(address _to) public onlyOwner {
         uint totalBalance = Balance(address(this));
-        TransferHelper.safeTransfer(address(tokenAddress), _to, totalBalance);
+        tokenAddress.transfer(_to, totalBalance);
     }
 
     function customBusdWithdraw(uint amount_) public onlyOwner {
         uint totalBalance = Balance(address(this));
         require(amount_ <= totalBalance, "ERROR: Insufficient balance");
-        TransferHelper.safeTransfer(
-            address(tokenAddress),
-            _msgSender(),
-            amount_
-        );
+        tokenAddress.transfer(_msgSender(), amount_);
     }
 
     function customBusdWithdrawToCustomAddress(uint amount_, address _to)
@@ -76,6 +69,5 @@ contract erc721 is ERC721("HyperNfts", "hyper"), Ownable {
         uint totalBalance = Balance(address(this));
         require(amount_ <= totalBalance, "ERROR: Insufficient balance");
         tokenAddress.transfer(_to, amount_);
-        TransferHelper.safeTransfer(address(tokenAddress), _to, amount_);
     }
 }
