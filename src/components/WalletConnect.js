@@ -19,37 +19,38 @@ export default function ConnectWallet() {
     }
   };
 
-  const changeChainId = async () => {
-    const { ethereum } = window;
-    const chainId = await ethereum.request({ method: "eth_chainId" });
-    const Goerli = "0x5";
-    if (chainId !== Goerli) {
-      try {
-        await ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x5" }], // chainId must be in hexadecimal numbers
-        });
-      } catch (error) {
-        // This error code indicates that the chain has not been added to MetaMask
-        // if it is not, then install it into the user MetaMask
-        if (error.code === 4902) {
-          try {
-            await ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: "0x5",
-                  rpcUrl: "https://goerli.infura.io/v3/",
-                },
-              ],
-            });
-          } catch (addError) {
-            console.error(addError);
-          }
-        }
-      }
-    }
-  };
+  // const changeChainId = async () => {
+  //   const { ethereum } = window;
+  //   const chainId = await ethereum.request({ method: "eth_chainId" });
+  //   const Binance = "0x56";
+  //   if (chainId !== Binance) {
+  //     try {
+  //       await ethereum.request({
+  //         method: "wallet_switchEthereumChain",
+  //         params: [{ chainId: "0x56" }], // chainId must be in hexadecimal numbers
+  //       });
+  //     } catch (error) {
+  //       // This error code indicates that the chain has not been added to MetaMask
+  //       // if it is not, then install it into the user MetaMask
+  //       if (error.code === 4902) {
+  //         try {
+  //           await ethereum.request({
+  //             method: "wallet_addEthereumChain",
+  //             params: [
+  //               {
+  //                 chainId: "0x56",
+  //                 rpcUrl: "https://bsc-dataseed1.binance.org",
+  //               },
+  //             ],
+  //           });
+  //         } catch (addError) {
+  //           console.error(addError);
+  //         }
+  //       }
+  //     }
+  //   }
+  // };
+
   const getCurrentWalletConnected = async () => {
     try {
       const { ethereum } = window;
@@ -70,7 +71,6 @@ export default function ConnectWallet() {
         alert("get metamask!");
         return;
       }
-      changeChainId();
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
@@ -83,7 +83,6 @@ export default function ConnectWallet() {
 
   useEffect(() => {
     checkIfAccountChanged();
-    changeChainId();
     getCurrentWalletConnected();
   });
   return [currentAccount, connectWallet];

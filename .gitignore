@@ -14,6 +14,7 @@ typechain-types
 
 # production
 /build
+NFTMinting.zip
 
 # misc
 cache
@@ -40,4 +41,3 @@ typechain-types
 #Hardhat files
 cache
 artifacts
-
