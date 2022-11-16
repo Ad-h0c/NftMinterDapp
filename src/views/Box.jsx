@@ -17,8 +17,8 @@ const NftBox = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
-      const NFTAddress = "0x96f23134549e14A8c66a7a596a94E7fBC89ee188";
-      const BUSDAddress = "0xBf915DBEEe201f31dc0711a9bE702Db8BA94d2fa";
+      const NFTAddress = "0xf00ce4703b61a43482d8bb4434c15ae52ab11150";
+      const BUSDAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
       const contract = new ethers.Contract(BUSDAddress, erc20Abi, provider);
       const getAllowance = await contract.allowance(
         signer.getAddress(),
@@ -40,9 +40,9 @@ const NftBox = () => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const BUSDAddress = "0xBf915DBEEe201f31dc0711a9bE702Db8BA94d2fa";
+      const BUSDAddress = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
       const contract = new ethers.Contract(BUSDAddress, erc20Abi, signer);
-      const NFtAddress = "0x96f23134549e14A8c66a7a596a94E7fBC89ee188";
+      const NFtAddress = "0xf00ce4703b61a43482d8bb4434c15ae52ab11150";
       const approve = await contract.approve(
         NFtAddress,
         ethers.constants.MaxUint256
@@ -59,7 +59,7 @@ const NftBox = () => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const NFTAddress = "0x96f23134549e14A8c66a7a596a94E7fBC89ee188";
+      const NFTAddress = "0xf00ce4703b61a43482d8bb4434c15ae52ab11150";
       const contract = new ethers.Contract(NFTAddress, erc721Abi, signer);
       const mint = await contract.safeMintWithBUSD(tokenId);
       await mint.wait();
